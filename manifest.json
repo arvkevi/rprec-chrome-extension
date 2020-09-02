@@ -1,0 +1,28 @@
+{
+  "name": "Recommendation Engine for Real Python Content",
+  "description": "A content recommendation engine for Real Python",
+  "version": "0.0.0.1",
+  "browser_action": {
+    "default_title": "Show Tabs in this Process",
+    "default_icon": "icon-16.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "processes",
+    "tabs",
+    "background",
+    "storage",
+    "http://realpython-recommender.herokuapp.com/*",
+    "https://realpython-recommender.herokuapp.com/*"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persist": false
+  },
+  "manifest_version": 2,
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
+}

@@ -1,0 +1,51 @@
+body {
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  background: white;
+  width: 400px;
+}
+
+div:first-child {
+  margin-top: 0px;
+}
+
+div {
+  padding: 1px 3px;
+  font-family: sans-serif;
+  font-size: 10pt;
+  width: 400px;
+  margin-top: 1px;
+}
+
+table.table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+table.table td, table.table th {
+  border: 1px solid #000000;
+  padding: 5px 4px;
+}
+
+table.table tbody td {
+  font-size: 14px;
+  font-family: 'Lato';
+}
+
+table.table thead {
+  background: #1E344A;
+  border-bottom: 3px solid #1E344A;
+}
+
+table.table thead th {
+  font-size: 15px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: left;
+}
+
+table.table tfoot td {
+  font-size: 14px;
+}
