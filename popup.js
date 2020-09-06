@@ -10,8 +10,10 @@ function requestSimilarArticles(event) {
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.message === "storage is ready") {
+      console.log('message from background');
       chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => {
         var slug = tabs[0].url.split('/').slice(-2, -1)[0];
+        console.log(slug);
         var outputDiv = document.getElementById("tab-list");
         chrome.storage.local.get([slug], function (data) {
           console.log(data);
@@ -19,12 +21,13 @@ chrome.runtime.onMessage.addListener(
           var realPythonUrl = 'https://realpython.com/'
           console.log(similarData);
           if (tabs[0].favIconUrl != undefined) {
-            outputDiv.innerHTML = ""
-            var htmlStr = `
-            <table class="table">
+            outputDiv.innerHTML = "";
+            if (similarData.length>0) {
+              var htmlStr = `
+              <table class="table">
               <thead>
                   <tr>
-                    <th>Top 3 Similar Slugs</th>
+                    <th>Top 3 Similar Pages</th>
                     <th>Similarity Score</th>
                   </tr>
               </thead>
@@ -44,8 +47,20 @@ chrome.runtime.onMessage.addListener(
               </tbody>
             </table>
             `
-            outputDiv.innerHTML += htmlStr
-          }
+            } else {
+              var htmlStr = `
+              <p>Real Python Recommender works if you are on a 
+              <a style = " white-space:nowrap; " href="https://realpython.com/k-means-clustering-python" target="_blank">Real Python</a>
+               url.
+              </p>
+              <p>If you are on a Real Python url and the tool is not working, please create an issue on the 
+              <a style = " white-space:nowrap; " href="https://github.com/arvkevi/rprec-chrome-extension" target="_blank">GitHub</a>
+              page
+              </p>
+              `
+            };
+            outputDiv.innerHTML += htmlStr;
+          };
         });
       });
     }

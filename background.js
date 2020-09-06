@@ -23,39 +23,6 @@ function fetchSimilarArticles(slug) {
         })
 };
 
-// function myPromise(slug) {
-//     let recommenderUrl = 'https://realpython-recommender.herokuapp.com/';
-//     let doc2vecEndpoint = 'articles/similar/doc2vec/';
-//     let doc2vecUrl = recommenderUrl + doc2vecEndpoint + slug + '/';
-//     var slug = slug;
-
-//     return new Promise((resolve, reject) => {
-//         setTimeout(() => {
-//             resolve('Stack Overflow');
-//             // reject('Some Error')
-//         }, 2000);
-//     });
-// }
-
-// function showSpinner() {
-//     document.getElementById('loader').style.display = 'block';
-// }
-
-// function hideSpinner() {
-//     document.getElementById('loader').style.display = 'none';
-// }
-
-// async function sayHello(slug) {
-//     try {
-//         console.log('ridin spinners');// showSpinner()
-//         await fetchSimilarArticles(slug);
-//     } catch (err) {
-//         console.error(err);
-//     } finally {
-//         console.log('finally');// hideSpinner()
-//     }
-// }
-
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.message === "start") {
