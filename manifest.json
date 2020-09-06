@@ -1,5 +1,5 @@
 {
-  "name": "Recommendation Engine for Real Python Content",
+  "name": "Real Python Content Recommender",
   "description": "A content recommendation engine for Real Python",
   "version": "0.0.0.1",
   "browser_action": {
@@ -8,7 +8,6 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-    "processes",
     "tabs",
     "background",
     "storage",
