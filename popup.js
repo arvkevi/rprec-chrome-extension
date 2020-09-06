@@ -10,7 +10,6 @@ function requestSimilarArticles(event) {
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.message === "storage is ready") {
-      console.log('message from background');
       chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => {
         var slug = tabs[0].url.split('/').slice(-2, -1)[0];
         console.log(slug);
