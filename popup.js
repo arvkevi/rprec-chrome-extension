@@ -26,10 +26,15 @@ function renderSimilarArticles(similarArticles) {
       return;
     }
 
+    const articleUrl = new URL(article.similar_slug, "https://realpython.com/");
+    if (articleUrl.origin !== "https://realpython.com") {
+      return;
+    }
+
     const row = body.insertRow();
     const title = row.insertCell();
     const link = document.createElement("a");
-    link.href = new URL(article.similar_slug, "https://realpython.com/").href;
+    link.href = articleUrl.href;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.textContent = article.similar_slug;
