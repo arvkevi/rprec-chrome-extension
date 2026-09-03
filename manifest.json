@@ -2,22 +2,22 @@
   "name": "Real Python Content Recommender",
   "description": "A content recommendation engine for Real Python",
   "version": "0.0.0.1",
-  "browser_action": {
+  "action": {
     "default_title": "Show Tabs in this Process",
     "default_icon": "icon-16.png",
     "default_popup": "popup.html"
   },
   "permissions": [
     "tabs",
-    "background",
-    "storage",
+    "storage"
+  ],
+  "host_permissions": [
     "https://realpython-recommender.herokuapp.com/*"
   ],
   "background": {
-    "scripts": ["background.js"],
-    "persist": false
+    "service_worker": "background.js"
   },
-  "manifest_version": 2,
+  "manifest_version": 3,
   "icons": {
     "16": "icon-16.png",
     "48": "icon-48.png",
