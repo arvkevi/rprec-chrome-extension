@@ -1,68 +1,74 @@
+function showMessage(message) {
+  const output = document.getElementById("tab-list");
+  output.replaceChildren();
+  output.textContent = message;
+}
 
-function requestSimilarArticles(event) {
+function renderSimilarArticles(similarArticles) {
+  if (!Array.isArray(similarArticles) || similarArticles.length === 0) {
+    showMessage("Real Python Recommender works when viewing a Real Python article.");
+    return;
+  }
+
+  const output = document.getElementById("tab-list");
+  const table = document.createElement("table");
+  table.className = "table";
+  const header = table.createTHead().insertRow();
+  ["Top 3 Similar Pages", "Similarity Score"].forEach(function (label) {
+    const cell = document.createElement("th");
+    cell.textContent = label;
+    header.appendChild(cell);
+  });
+
+  const body = table.createTBody();
+  similarArticles.slice(0, 3).forEach(function (article) {
+    if (typeof article.similar_slug !== "string" || typeof article.doc2vec_similarity !== "number") {
+      return;
+    }
+
+    const articleUrl = new URL(article.similar_slug, "https://realpython.com/");
+    if (articleUrl.origin !== "https://realpython.com") {
+      return;
+    }
+
+    const row = body.insertRow();
+    const title = row.insertCell();
+    const link = document.createElement("a");
+    link.href = articleUrl.href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = article.similar_slug;
+    title.appendChild(link);
+    const score = row.insertCell();
+    score.textContent = article.doc2vec_similarity.toFixed(2);
+  });
+
+  output.replaceChildren(table);
+}
+
+function requestSimilarArticles() {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    var activeTab = tabs[0];
-    let slug = tabs[0].url.split('/').slice(-2, -1)[0];
-    chrome.runtime.sendMessage({ message: "start", slug: slug });
+    const activeTab = tabs[0];
+    if (!activeTab || !activeTab.url) {
+      showMessage("Unable to read the active tab.");
+      return;
+    }
+
+    const pathParts = new URL(activeTab.url).pathname.split("/").filter(Boolean);
+    const slug = pathParts[pathParts.length - 1];
+    if (!slug) {
+      showMessage("Real Python Recommender works when viewing a Real Python article.");
+      return;
+    }
+
+    chrome.runtime.sendMessage({ message: "start", slug: slug }, function (response) {
+      if (chrome.runtime.lastError || !response || !response.ok) {
+        showMessage("Unable to retrieve similar articles. Please try again.");
+        return;
+      }
+      renderSimilarArticles(response.data);
+    });
   });
 }
 
-chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
-    if (request.message === "storage is ready") {
-      chrome.tabs.query({ active: true, lastFocusedWindow: true }, tabs => {
-        var slug = tabs[0].url.split('/').slice(-2, -1)[0];
-        console.log(slug);
-        var outputDiv = document.getElementById("tab-list");
-        chrome.storage.local.get([slug], function (data) {
-          console.log(data);
-          var similarData = data[slug];
-          var realPythonUrl = 'https://realpython.com/'
-          console.log(similarData);
-          if (tabs[0].favIconUrl != undefined) {
-            outputDiv.innerHTML = "";
-            if (similarData.length>0) {
-              var htmlStr = `
-              <table class="table">
-              <thead>
-                  <tr>
-                    <th>Top 3 Similar Pages</th>
-                    <th>Similarity Score</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                    <td><a href="${realPythonUrl}${JSON.stringify(similarData[0].similar_slug).replace(/\"/g, "")}" target="_blank">${JSON.stringify(similarData[0].similar_slug).replace(/\"/g, "")}</a> <i class="fas fa-external-link-square-alt" style="color:#1E344A;"></i></td>
-                    <td style="text-align:center">${JSON.stringify(similarData[0].doc2vec_similarity.toFixed(2)).replace(/\"/g, "")}</td>
-                  </tr>
-                  <tr>
-                    <td><a href="${realPythonUrl}${JSON.stringify(similarData[1].similar_slug).replace(/\"/g, "")}" target="_blank">${JSON.stringify(similarData[1].similar_slug).replace(/\"/g, "")}</a> <i class="fas fa-external-link-square-alt" style="color:#1E344A;"></i></td>
-                    <td style="text-align:center">${JSON.stringify(similarData[1].doc2vec_similarity.toFixed(2)).replace(/\"/g, "")}</td>
-                  </tr>
-                  <tr>
-                    <td><a href="${realPythonUrl}${JSON.stringify(similarData[2].similar_slug).replace(/\"/g, "")}" target="_blank">${JSON.stringify(similarData[2].similar_slug).replace(/\"/g, "")}</a> <i class="fas fa-external-link-square-alt" style="color:#1E344A;"></i></td>
-                    <td style="text-align:center">${JSON.stringify(similarData[2].doc2vec_similarity.toFixed(2)).replace(/\"/g, "")}</td>
-                  </tr>
-              </tbody>
-            </table>
-            `
-            } else {
-              var htmlStr = `
-              <p>Real Python Recommender works if you are on a 
-              <a style = " white-space:nowrap; " href="https://realpython.com/k-means-clustering-python" target="_blank">Real Python</a>
-               url.
-              </p>
-              <p>If you are on a Real Python url and the tool is not working, please create an issue on the 
-              <a style = " white-space:nowrap; " href="https://github.com/arvkevi/rprec-chrome-extension" target="_blank">GitHub</a>
-              page
-              </p>
-              `
-            };
-            outputDiv.innerHTML += htmlStr;
-          };
-        });
-      });
-    }
-});
-
-document.getElementById('getSimilarArticles').onclick = requestSimilarArticles;
+document.getElementById("getSimilarArticles").addEventListener("click", requestSimilarArticles);

@@ -31,7 +31,7 @@ table.table td, table.table th {
 
 table.table tbody td {
   font-size: 14px;
-  font-family: 'Lato';
+  font-family: sans-serif;
 }
 
 table.table thead {
@@ -51,5 +51,5 @@ table.table tfoot td {
 }
 
 p {
-  font-family: 'Lato';
+  font-family: sans-serif;
 }
